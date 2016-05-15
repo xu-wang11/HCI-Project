@@ -1,6 +1,7 @@
 package com.example.zyx.position;
 
 import android.content.Intent;
+import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.os.Handler;
 import android.os.Message;
@@ -22,13 +23,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class GetPosition extends AppCompatActivity implements SensorListener{
+public class GetPosition extends AppCompatActivity implements Orientation.Listener{
     private TextView show = null;
     private TextView acc = null;
     private TextView mag = null;
+    private TextView rotation_vector = null;
     private LinearLayout linearLayout = null;
-    SensorManager sm = null;
+
     private Timer timer = new Timer();
+
+    private Orientation mOrientation;
 
     final String tag = "IBMEyes";
     private PrintWriter os = null;
@@ -40,6 +44,7 @@ public class GetPosition extends AppCompatActivity implements SensorListener{
     public ArrayList<String> requests = new ArrayList<String>();
 
     public String url = "";
+    public String rotationUrl = "";
 
     TimerTask task = new TimerTask() {
 
@@ -56,7 +61,8 @@ public class GetPosition extends AppCompatActivity implements SensorListener{
         //final String ip = bundle.getString("ip");
         //final int port = Integer.parseInt(bundle.getString("port"));
         //url = "http://" +  ip + ":"+ port + "?"
-        url = "http://183.173.63.170:8888?";
+        url = "http://192.168.34.113:8888?";
+        rotationUrl = "http://192.168.34.113:8888/rotation?";
         //network
             /*
         new Thread(new Runnable(){
@@ -103,11 +109,13 @@ public class GetPosition extends AppCompatActivity implements SensorListener{
         new Thread(connectRunnable).start();
         //touchscreen
         setContentView(R.layout.activity_get_position);
-        sm = (SensorManager) getSystemService(SENSOR_SERVICE);
+
 
         show = (TextView)super.findViewById(R.id.show);
         acc = (TextView)super.findViewById(R.id.acc);
         mag = (TextView)super.findViewById(R.id.mag);
+        rotation_vector = (TextView)super.findViewById(R.id.rv);
+
         linearLayout = (LinearLayout)super.findViewById(R.id.LinearLayout1);
         linearLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -196,6 +204,9 @@ public class GetPosition extends AppCompatActivity implements SensorListener{
                 return true;
             }
         });
+            mOrientation = new Orientation(this);
+            //mAttitudeIndicator = (AttitudeIndicator) findViewById(R.id.attitude_indicator);
+            // = (TextView)findViewById(R.id.textView);
     }
 
     Runnable networkTask = new Runnable() {
@@ -211,7 +222,6 @@ public class GetPosition extends AppCompatActivity implements SensorListener{
                                handler.sendMessage(handler.obtainMessage());
                            }
                        }
-
                    }
                }
            }
@@ -235,80 +245,23 @@ public class GetPosition extends AppCompatActivity implements SensorListener{
     };
 
     @Override
-    public void onSensorChanged(int sensor, float[] values) {
-        synchronized (this) {
-            String str =  sensor+"X：" + values[1] + "，Y：" + values[0] + "，Z：" + values[2];
-           // System.out.println(str);
-            switch (sensor){
-                case Sensor.TYPE_ACCELEROMETER:
-                    acc.setText("accelerometer：" + str);
-                    break;
-                case Sensor.TYPE_MAGNETIC_FIELD:
-                    mag.setText("magnetic：" + str);
-                    //System.out.println("here");
-                    break;
-                case Sensor.TYPE_ORIENTATION:
-                    System.out.println("定位：" + str);
-                    break;
-                case Sensor.TYPE_GYROSCOPE:
-                    System.out.println("陀螺仪：" + str);
-                    break;
-                case Sensor.TYPE_LIGHT:
-                    System.out.println("光线：" + str);
-                    break;
-                case Sensor.TYPE_PRESSURE:
-                    System.out.println("压力：" + str);
-                    break;
-                case Sensor.TYPE_TEMPERATURE:
-                    System.out.println("温度：" + str);
-                    break;
-                case Sensor.TYPE_PROXIMITY:
-                    //show.setText("距离：" + str);
-                    //System.out.println("here");
-                    break;
-                case Sensor.TYPE_GRAVITY:
-                    System.out.println("重力：" + str);
-                    break;
-                case Sensor.TYPE_LINEAR_ACCELERATION:
-                    System.out.println("线性加速度：" + str);
-                    break;
-                case Sensor.TYPE_ROTATION_VECTOR:
-                    System.out.println("旋转矢量：" + str);
-                    break;
-                default:
-                    System.out.println("NORMAL：" + str);
-                    break;
-            }
-        }
-    }
-    public void onAccuracyChanged(int sensor, int accuracy) {
-        Log.d(tag, "onAccuracyChanged: " + sensor + ", accuracy: " + accuracy);
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        sm.registerListener(this,
-                Sensor.TYPE_ACCELEROMETER |
-                        Sensor.TYPE_MAGNETIC_FIELD |
-                        Sensor.TYPE_ORIENTATION |
-                        Sensor.TYPE_GYROSCOPE |
-                        Sensor.TYPE_LIGHT |
-                        Sensor.TYPE_PRESSURE |
-                        Sensor.TYPE_TEMPERATURE |
-                        Sensor.TYPE_PROXIMITY |
-                        Sensor.TYPE_GRAVITY |
-                        Sensor.TYPE_LINEAR_ACCELERATION |
-                        Sensor.TYPE_ROTATION_VECTOR,
-                SensorManager.SENSOR_DELAY_NORMAL);
+    protected void onStart() {
+        super.onStart();
+        mOrientation.startListening(this);
     }
 
     @Override
     protected void onStop() {
-        sm.unregisterListener(this);
         super.onStop();
+        mOrientation.stopListening();
     }
 
 
+    @Override
+    public void onOrientationChanged(float pitch, float roll, float yaw) {
+        java.text.DecimalFormat   df   =new   java.text.DecimalFormat("#.00");
+        rotation_vector.setText(df.format(pitch) + ":" + df.format(roll) + ":" + df.format(yaw));
+        String str = new java.text.DecimalFormat("#.00").format(pitch) + "&" + new java.text.DecimalFormat("#.00").format(roll) + "&" + new java.text.DecimalFormat("#.00").format(yaw);
+        requests.add(rotationUrl+str);
+    }
 }
