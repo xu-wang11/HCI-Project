@@ -61,8 +61,8 @@ public class GetPosition extends AppCompatActivity implements Orientation.Listen
         //final String ip = bundle.getString("ip");
         //final int port = Integer.parseInt(bundle.getString("port"));
         //url = "http://" +  ip + ":"+ port + "?"
-        url = "http://192.168.34.113:8888?";
-        rotationUrl = "http://192.168.34.113:8888/rotation?";
+        url = "http://192.168.0.105:8888?";
+        rotationUrl = "http://192.168.0.105:8888/rotation?";
         //network
             /*
         new Thread(new Runnable(){
