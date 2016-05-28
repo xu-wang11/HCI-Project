@@ -15,6 +15,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.hardware.SensorListener;
 import android.util.Log;
+
+import com.example.zyx.network.NetworkSender;
+
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
@@ -23,16 +26,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class GetPosition extends AppCompatActivity implements Orientation.Listener{
+public class GetPosition extends AppCompatActivity{
     private TextView show = null;
     private TextView acc = null;
     private TextView mag = null;
-    private TextView rotation_vector = null;
+
     private LinearLayout linearLayout = null;
 
     private Timer timer = new Timer();
 
-    private Orientation mOrientation;
+
 
     final String tag = "IBMEyes";
     private PrintWriter os = null;
@@ -40,11 +43,11 @@ public class GetPosition extends AppCompatActivity implements Orientation.Listen
     private Socket socket = null;
     private String content = "";
     private boolean status = false;
-    public NetworkHelper helper = new NetworkHelper();
-    public ArrayList<String> requests = new ArrayList<String>();
 
     public String url = "";
     public String rotationUrl = "";
+
+    private NetworkSender networkSender = null;
 
     TimerTask task = new TimerTask() {
 
@@ -61,60 +64,16 @@ public class GetPosition extends AppCompatActivity implements Orientation.Listen
         //final String ip = bundle.getString("ip");
         //final int port = Integer.parseInt(bundle.getString("port"));
         //url = "http://" +  ip + ":"+ port + "?"
-        url = "http://192.168.0.105:8888?";
-        rotationUrl = "http://192.168.0.105:8888/rotation?";
-        //network
-            /*
-        new Thread(new Runnable(){
-            @Override
-            public void run() {
-                try {
-                    socket = new Socket(ip, port);
-                    os = new PrintWriter(socket.getOutputStream());
-                    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                new Thread(networkTask).start();
-            }
-        }).start();
-        */
-
-
-        // sensors
-        timer.schedule(task, 0, 20);
-        Runnable connectRunnable = new Runnable() {
-            public void run()
-            {
-                while(true){
-                    if(requests.size() > 0) {
-                        String r = requests.get(requests.size() - 1);
-                        requests.clear();
-
-                        helper.syncGetAllAlbums(r);
-                    }
-                    else
-                    {
-                        try {
-                            //Thread.sleep(10);
-                        }catch (Exception e)
-                        {
-                            //Log.d(e.getMessage());
-                        }
-                    }
-                }
-            }
-        };
-        //handler.post(connectRunnable);
-        new Thread(connectRunnable).start();
+        //url = "http://192.168.0.105:8888?";
+        //rotationUrl = "http://192.168.0.105:8888/rotation?";
+        networkSender = new NetworkSender("166.111.83.209", 8888, this);
+        networkSender.StartWorking();
         //touchscreen
         setContentView(R.layout.activity_get_position);
-
-
         show = (TextView)super.findViewById(R.id.show);
         acc = (TextView)super.findViewById(R.id.acc);
         mag = (TextView)super.findViewById(R.id.mag);
-        rotation_vector = (TextView)super.findViewById(R.id.rv);
+
 
         linearLayout = (LinearLayout)super.findViewById(R.id.LinearLayout1);
         linearLayout.setOnTouchListener(new View.OnTouchListener() {
@@ -152,7 +111,7 @@ public class GetPosition extends AppCompatActivity implements Orientation.Listen
                     {
                         status = false;
                         String str = new java.text.DecimalFormat("#.00").format(ry) + "&" + new java.text.DecimalFormat("#.00").format(rx2) + "&" + new java.text.DecimalFormat("#.00").format(ry2);
-                        requests.add(url+str);
+                        networkSender.AddQuery("position", str);
                     }
                     show.setText(ry + "," + rx2 + "," + ry2);
 
@@ -186,7 +145,7 @@ public class GetPosition extends AppCompatActivity implements Orientation.Listen
                         {
                             status = false;
                             String str = 0 + "&" +new java.text.DecimalFormat("#.00").format(rx2) + "&" + new java.text.DecimalFormat("#.00").format(ry2);
-                            requests.add(url + str);
+                            networkSender.AddQuery("position", str);
                             //os.flush();
                         }
 
@@ -204,64 +163,10 @@ public class GetPosition extends AppCompatActivity implements Orientation.Listen
                 return true;
             }
         });
-            mOrientation = new Orientation(this);
+
             //mAttitudeIndicator = (AttitudeIndicator) findViewById(R.id.attitude_indicator);
             // = (TextView)findViewById(R.id.textView);
     }
 
-    Runnable networkTask = new Runnable() {
 
-        @Override
-        public void run() {
-           try{
-               while (true){
-                   if(socket.isConnected()){
-                       if(!socket.isOutputShutdown()){
-                           if((content = in.readLine()) != null){
-                               content += "\n";
-                               handler.sendMessage(handler.obtainMessage());
-                           }
-                       }
-                   }
-               }
-           }
-           catch (Exception e)
-           {
-               Log.i("mylog", "haha");
-           }
-        }
-    };
-
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            Bundle data = msg.getData();
-            String val = data.getString("value");
-            Log.i("mylog", "请求结果为-->" + val);
-            // TODO
-            // UI界面的更新等相关操作
-        }
-    };
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mOrientation.startListening(this);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mOrientation.stopListening();
-    }
-
-
-    @Override
-    public void onOrientationChanged(float pitch, float roll, float yaw) {
-        java.text.DecimalFormat   df   =new   java.text.DecimalFormat("#.00");
-        rotation_vector.setText(df.format(pitch) + ":" + df.format(roll) + ":" + df.format(yaw));
-        String str = new java.text.DecimalFormat("#.00").format(pitch) + "&" + new java.text.DecimalFormat("#.00").format(roll) + "&" + new java.text.DecimalFormat("#.00").format(yaw);
-        requests.add(rotationUrl+str);
-    }
 }
