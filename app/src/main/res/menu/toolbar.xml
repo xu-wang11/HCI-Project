@@ -13,4 +13,11 @@
     <item android:id="@+id/action_rotation"
         android:title="@string/action_rotation"
         app:showAsAction="never"/>
+    <item android:id="@+id/action_justdepth"
+        android:title="@string/action_justdepth"
+        app:showAsAction="never"/>
+    <item android:id="@+id/action_updown"
+        android:title="@string/action_updown"
+        app:showAsAction="never"/>
+
 </menu>

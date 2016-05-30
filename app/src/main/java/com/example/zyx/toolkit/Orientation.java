@@ -22,6 +22,12 @@ public class Orientation implements SensorEventListener {
 
     private final SensorManager mSensorManager;
 
+    private double _yaw;
+
+    private double _pitch;
+
+    private double _roll;
+
     @Nullable
     private final Sensor mRotationSensor;
 
@@ -34,6 +40,21 @@ public class Orientation implements SensorEventListener {
 
         // Can be null if the sensor hardware is not available
         mRotationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+    }
+
+    public double GetPitch()
+    {
+        return _pitch;
+    }
+
+    public double GetYaw()
+    {
+        return _yaw;
+    }
+
+    public double GetRoll()
+    {
+        return _roll;
     }
 
     public void startListening(Listener listener) {
@@ -122,6 +143,9 @@ public class Orientation implements SensorEventListener {
         float pitch = (float)Math.toDegrees(orientation[1]);
         float roll = (float) Math.toDegrees(orientation[2]);
         float yaw = (float)Math.toDegrees(orientation[0]);
+        _pitch = pitch;
+        _roll = roll;
+        _yaw = yaw;
 
         mListener.onOrientationChanged(pitch, roll, yaw);
     }

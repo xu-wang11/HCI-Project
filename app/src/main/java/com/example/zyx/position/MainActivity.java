@@ -53,23 +53,22 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_position: {
-                Intent intent = new Intent(MainActivity.this,
-                        GetPosition.class);
-                String ip = ((TextView) findViewById(R.id.editText)).getText().toString();
-                String port = ((TextView) findViewById(R.id.editText2)).getText().toString();
-                intent.putExtra("ip", ip);
-                intent.putExtra("port", port);
-                startActivity(intent);
+                GotoView(1);
                 return true;
             }
             case R.id.action_rotation: {
-                Intent intent = new Intent(MainActivity.this,
-                        RotationActivity.class);
-                String ip = ((TextView) findViewById(R.id.editText)).getText().toString();
-                String port = ((TextView) findViewById(R.id.editText2)).getText().toString();
-                intent.putExtra("ip", ip);
-                intent.putExtra("port", port);
-                startActivity(intent);
+                GotoView(2);
+
+                return true;
+            }
+
+            case R.id.action_justdepth:{
+                GotoView(3);
+                return true;
+            }
+
+            case R.id.action_updown:{
+                GotoView(4);
                 return true;
             }
 
@@ -87,5 +86,47 @@ public class MainActivity extends AppCompatActivity {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.toolbar, menu);
         return true;
+    }
+
+    public void GotoView(int mode)
+    {
+        Class<?> c = null;
+        switch (mode)
+        {
+            case 1:
+                c = GetPosition.class;
+                break;
+            case 2:
+                c = RotationActivity.class;
+                break;
+            case 3:
+                c = JustDepth.class;
+                break;
+            case 4:
+                c = UpDownActivity.class;
+                break;
+            default:
+                break;
+        }
+
+        Intent intent = new Intent(MainActivity.this,
+                c);
+        String ip = ((TextView) findViewById(R.id.editText)).getText().toString();
+        String port = ((TextView) findViewById(R.id.editText2)).getText().toString();
+        intent.putExtra("ip", ip);
+        intent.putExtra("port", port);
+        startActivityForResult(intent, 1);
+
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if(resultCode == RESULT_OK){
+                int mode=data.getIntExtra("mode", 0);
+                System.out.println(mode);
+                GotoView(mode);
+            }
+        }
     }
 }

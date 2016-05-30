@@ -26,7 +26,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class GetPosition extends AppCompatActivity{
+public class GetPosition extends AppCompatActivity implements ActivityInterface{
     private TextView show = null;
     private TextView acc = null;
     private TextView mag = null;
@@ -59,14 +59,14 @@ public class GetPosition extends AppCompatActivity{
         @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Intent intent = GetPosition.this.getIntent();
-        //Bundle bundle = intent.getExtras();
-        //final String ip = bundle.getString("ip");
-        //final int port = Integer.parseInt(bundle.getString("port"));
+        Intent intent = GetPosition.this.getIntent();
+        Bundle bundle = intent.getExtras();
+        final String ip = bundle.getString("ip");
+        final int port = Integer.parseInt(bundle.getString("port"));
         //url = "http://" +  ip + ":"+ port + "?"
         //url = "http://192.168.0.105:8888?";
         //rotationUrl = "http://192.168.0.105:8888/rotation?";
-        networkSender = new NetworkSender("166.111.83.209", 8888, this);
+        networkSender = new NetworkSender(ip, port, this);
         networkSender.StartWorking();
         //touchscreen
         setContentView(R.layout.activity_get_position);
@@ -107,12 +107,10 @@ public class GetPosition extends AppCompatActivity{
                     double ry2 = x1 / w;
                     ry2 = ry2 > 0?ry2:0;
                     ry2 = ry2 < 1?ry2:1;
-                    if( status == true)
-                    {
-                        status = false;
-                        String str = new java.text.DecimalFormat("#.00").format(ry) + "&" + new java.text.DecimalFormat("#.00").format(rx2) + "&" + new java.text.DecimalFormat("#.00").format(ry2);
-                        networkSender.AddQuery("position", str);
-                    }
+
+                    String str = new java.text.DecimalFormat("#.00").format(ry) + "&" + new java.text.DecimalFormat("#.00").format(rx2) + "&" + new java.text.DecimalFormat("#.00").format(ry2);
+                    networkSender.AddQuery("position", str);
+
                     show.setText(ry + "," + rx2 + "," + ry2);
 
                     return true;
@@ -166,6 +164,20 @@ public class GetPosition extends AppCompatActivity{
 
             //mAttitudeIndicator = (AttitudeIndicator) findViewById(R.id.attitude_indicator);
             // = (TextView)findViewById(R.id.textView);
+    }
+
+    @Override
+    public void ModeChange(int mode) {
+
+        Intent intent = new Intent();
+        intent.putExtra("mode", mode);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    @Override
+    public int GetMode() {
+        return 1;
     }
 
 

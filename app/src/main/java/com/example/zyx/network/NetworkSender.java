@@ -7,6 +7,8 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.zyx.position.ActivityInterface;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -72,7 +74,7 @@ public class NetworkSender {
     {
 
         //querys.clear();
-        querys.add("http://"+ ipaddr + ":8888/" + action + "?"+query);
+        querys.add("http://" + ipaddr + ":8888/" + action + "?" + query);
     }
 
     private void executeQuery(String myurl) throws IOException {
@@ -86,12 +88,30 @@ public class NetworkSender {
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
             // Starts the query
-            conn.connect();
+            //if view implement the interface
             int response = conn.getResponseCode();
+            InputStream is = null;
+            is = conn.getInputStream();
+            // Convert the InputStream into a string
+            String contentAsString = readIt(is, len);
+            System.out.println(contentAsString);
+            if(contentAsString.charAt(0) - '0' != ((ActivityInterface)activity).GetMode())
+            {
+                ((ActivityInterface) activity).ModeChange(contentAsString.charAt(0) - '0');
+            }
+
         } finally {
             System.out.println("execute query end.");
 
         }
+    }
+
+    public String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
+        Reader reader = null;
+        reader = new InputStreamReader(stream, "UTF-8");
+        char[] buffer = new char[len];
+        reader.read(buffer);
+        return new String(buffer);
     }
 
 

@@ -4,5 +4,10 @@
     <string name="action_settings">Setting</string>
     <string name="action_position">Position</string>
     <string name="action_rotation">Rotation</string>
+    <string name="action_justdepth">JustDepth</string>
+    <string name="action_updown">UpDown</string>
     <string name="title_activity_container">ContainerActivity</string>
+    <string name="title_activity_just_depth">JustDepth</string>
+    <string name="title_activity_up_down">UpDownActivity</string>
+
 </resources>

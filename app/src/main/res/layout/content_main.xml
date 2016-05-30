@@ -38,7 +38,7 @@
         android:width="160dp"
         android:layout_alignParentTop="true"
         android:layout_alignStart="@+id/editText2"
-        android:text="192.168.34.113"
+        android:text="166.111.139.147"
         android:layout_marginTop="60dp" />
 
     <EditText
