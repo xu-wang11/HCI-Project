@@ -23,14 +23,17 @@ public class NetworkSender {
 
     private String ipaddr;
 
+    private int port;
+
     private Activity activity;
 
-    private ArrayList<String> querys;
+    private ArrayList<String> querys = new ArrayList<String>();
 
-    public NetworkSender(String ip_addr, Activity activity)
+    public NetworkSender(String ip_addr, int _port,  Activity activity)
     {
         this.ipaddr = ip_addr;
         this.activity = activity;
+        this.port = _port;
         ConnectivityManager connMgr = (ConnectivityManager)activity.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
@@ -43,57 +46,55 @@ public class NetworkSender {
     //start the background thread.
     public void StartWorking()
     {
-        new NetworkSenderTask().execute();
+        Runnable connectRunnable = new Runnable() {
+            public void run()
+            {
+                while(true){
+                    if(querys.size() > 0) {
+                        String r = querys.get(querys.size() - 1);
+                        querys.clear();
+                        try {
+                            executeQuery(r);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+            }
+        };
+        //handler.post(connectRunnable);
+        new Thread(connectRunnable).start();
     }
 
     //query example: a=b&c=d
-    public void AddQuery(String query)
+    public void AddQuery(String action, String query)
     {
 
-        querys.clear();
-        querys.add(query);
+        //querys.clear();
+        querys.add("http://"+ ipaddr + ":8888/" + action + "?"+query);
     }
 
-    private class NetworkSenderTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... urls) {
-            try {
-                while(true)
-                {
-                    if(querys.size() > 0)
-                    {
-                        String query = querys.get(0);
-                        querys.clear();
-                        executeQuery("http://" + ipaddr+ "?" + query);
-                    }
-                }
-            } catch (IOException e) {
-                return "Unable to retrieve web page. URL may be invalid.";
-            }
-        }
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(String result) {
+    private void executeQuery(String myurl) throws IOException {
+        int len = 500;
+        try {
+            System.out.println("execute query:" + myurl);
+            URL url = new URL(myurl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(1000 /* milliseconds */);
+            conn.setConnectTimeout(3000 /* milliseconds */);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            // Starts the query
+            conn.connect();
+            int response = conn.getResponseCode();
+        } finally {
+            System.out.println("execute query end.");
 
-        }
-
-        private void executeQuery(String myurl) throws IOException {
-            int len = 500;
-            try {
-                URL url = new URL(myurl);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(10000 /* milliseconds */);
-                conn.setConnectTimeout(15000 /* milliseconds */);
-                conn.setRequestMethod("GET");
-                conn.setDoInput(true);
-                // Starts the query
-                conn.connect();
-                int response = conn.getResponseCode();
-            } finally {
-
-            }
         }
     }
+
+
 
 
 
