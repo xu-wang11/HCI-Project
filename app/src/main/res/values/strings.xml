@@ -9,5 +9,6 @@
     <string name="title_activity_container">ContainerActivity</string>
     <string name="title_activity_just_depth">JustDepth</string>
     <string name="title_activity_up_down">UpDownActivity</string>
-
+    <string name="action_eightdirectory">EightDirectory</string>
+    <string name="action_movedistance">MoveDistance</string>
 </resources>

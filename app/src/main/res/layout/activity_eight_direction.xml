@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
+    android:layout_height="fill_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:weightSum="3"
+    android:orientation="vertical"
+    tools:context="com.example.zyx.position.EightDirectionActivity"
+    >
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_weight="1"
+        android:weightSum="3">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="New Button"
+            android:id="@+id/btn1"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="New Button"
+            android:layout_weight="1"
+            android:id="@+id/btn2"
+            android:layout_gravity="center_vertical" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="New Button"
+            android:id="@+id/btn3"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="New Button"
+            android:id="@+id/btn4"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="New Button"
+            android:layout_weight="1"
+            android:id="@+id/btn5"
+            android:layout_gravity="center_vertical" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="New Button"
+            android:id="@+id/btn6"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="New Button"
+            android:id="@+id/btn7"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="New Button"
+            android:layout_weight="1"
+            android:id="@+id/btn8"
+            android:layout_gravity="center_vertical" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="New Button"
+            android:id="@+id/btn9"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical" />
+    </LinearLayout>
+</LinearLayout>

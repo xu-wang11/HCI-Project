@@ -33,7 +33,10 @@ public class UpDownActivity extends AppCompatActivity implements  ActivityInterf
             public boolean onTouch(View v, MotionEvent event) {
                 if(event.getAction()== MotionEvent.ACTION_DOWN)
                 {
-                    networkSender.AddQuery("up", "0");
+                    networkSender.AddQuery("updown", "0");
+                }
+                else if(event.getAction() == MotionEvent.ACTION_UP){
+                    networkSender.AddQuery("updown", "2");
                 }
                 return true;
             }
@@ -43,11 +46,16 @@ public class UpDownActivity extends AppCompatActivity implements  ActivityInterf
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    networkSender.AddQuery("down", "1");
+                    networkSender.AddQuery("updown", "1");
+                }
+                else if(event.getAction() == MotionEvent.ACTION_UP){
+                    networkSender.AddQuery("updown", "2");
                 }
                 return true;
             }
         });
+
+
     }
 
     @Override

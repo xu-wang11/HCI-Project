@@ -19,5 +19,12 @@
     <item android:id="@+id/action_updown"
         android:title="@string/action_updown"
         app:showAsAction="never"/>
+    <item android:id="@+id/action_eightdirectory"
+        android:title="@string/action_eightdirectory"
+        app:showAsAction="never"/>
+    <item android:id="@+id/action_movedistance"
+        android:title="@string/action_movedistance"
+        app:showAsAction="never"/>
+
 
 </menu>

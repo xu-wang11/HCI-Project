@@ -72,6 +72,15 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
 
+            case R.id.action_eightdirectory:{
+                GotoView(5);
+                return true;
+            }
+            case R.id.action_movedistance:{
+                GotoView(6);
+                return true;
+            }
+
 
 
             default:
@@ -105,6 +114,11 @@ public class MainActivity extends AppCompatActivity {
             case 4:
                 c = UpDownActivity.class;
                 break;
+            case 5:
+                c= EightDirectionActivity.class;
+                break;
+            case 6:
+                c = MoveDistanceActivity.class;
             default:
                 break;
         }
